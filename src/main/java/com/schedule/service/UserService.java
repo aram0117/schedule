@@ -64,7 +64,7 @@ public class UserService {
     public GetUserResponse getOne(Long userId) {
         // 유저 아이디로 유저를 찾고 없으면 예외처리
         UserEntity user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("유저가 존재하지 않습니다")
+                () -> new IllegalStateException("없는 유저 입니다")
         );
         return new GetUserResponse(
                 user.getUserId(),
@@ -74,4 +74,41 @@ public class UserService {
                 user.getModifiedAt()
         );
     }
+
+    // 스케쥴 수정
+    @Transactional
+    public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
+        // 스케쥴 아이디로 스케쥴 찾기
+        // 없으면 예외 처리
+        UserEntity user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("없는 유저 입니다")
+        );
+        // 유저 수정 요청
+        user.update(
+                request.getUserName(),
+                request.getEmail()
+        );
+        // 수정 된 유저 반환
+        return new UpdateUserResponse(
+                user.getUserId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getModifiedAt()
+        );
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        // 유저 존재 여부
+        boolean existence = userRepository.existsById(userId);
+
+        // 유저가 존재하지 않을 때 예외처리
+        if (!existence) {
+            throw new IllegalStateException("없는 유저 입니다");
+        }
+        // 유저가 존재할 경우 삭제
+        userRepository.deleteById(userId);
+    }
 }
+

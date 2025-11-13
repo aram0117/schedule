@@ -1,8 +1,6 @@
 package com.schedule.service;
 
-import com.schedule.dto.CreateScheduleRequest;
-import com.schedule.dto.CreateScheduleResponse;
-import com.schedule.dto.GetScheduleResponse;
+import com.schedule.dto.*;
 import com.schedule.entity.ScheduleEntity;
 import com.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +66,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetScheduleResponse getOne(Long scheduleId){
         // 스케쥴 아이디로 스케쥴 찾기
+        // 없으면 예외 처리
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 스케쥴 입니다")
         );
@@ -80,5 +79,45 @@ public class ScheduleService {
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );
+    }
+
+    // 스케쥴 수정
+    @Transactional
+    public UpdateScheduleResponse updateSchedule(Long scheduleId, UpdateScheduleRequest request) {
+        // 스케쥴 아이디로 스케쥴 찾기
+        // 없으면 예외 처리
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("없는 스케쥴 입니다")
+        );
+
+        // 스케쥴 수정 요청
+        schedule.update(
+                request.getUserName(),
+                request.getTitle(),
+                request.getContent()
+        );
+        // 수정 된 스케쥴 반환
+        return new UpdateScheduleResponse(
+                schedule.getScheduleId(),
+                schedule.getUserName(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+    // 스케쥴 삭제
+    @Transactional
+    public void deleteSchedule(Long scheduleId) {
+        // 스케쥴 존재 여부
+        boolean existence = scheduleRepository.existsById(scheduleId);
+
+        // 스케쥴이 존재하지 않을 떄 예외처리
+        if(!existence) {
+            throw new IllegalStateException("없는 스케쥴 입니다");
+        }
+        // 스케쥴이 존재할 경우 삭제
+        scheduleRepository.deleteById(scheduleId);
     }
 }

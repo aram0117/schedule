@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity extends BaseEntity {
-    // 유저 필드
+    // 유저 DB
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;

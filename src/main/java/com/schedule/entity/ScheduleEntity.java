@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "schedules")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleEntity extends BaseEntity {
-    // 스케쥴 필드
+    // 스케쥴 DB
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
@@ -25,7 +25,8 @@ public class ScheduleEntity extends BaseEntity {
     }
 
     // 업데이트 구현시 반환
-    public void update(String title, String content){
+    public void update(String userName, String title, String content){
+        this.userName = userName;
         this.title = title;
         this.content = content;
     }
