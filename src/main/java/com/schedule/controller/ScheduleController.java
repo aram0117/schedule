@@ -30,7 +30,7 @@ public class ScheduleController {
 
     // 다 건 조회
     @GetMapping("/schedules/{scheduleId}")
-    public GetScheduleResponse getschedule(@PathVariable Long scheduleId) {
+    public GetScheduleResponse getSchedule(@PathVariable Long scheduleId) {
         return  scheduleService.getOne(scheduleId);
     }
 }

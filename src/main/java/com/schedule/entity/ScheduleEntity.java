@@ -18,13 +18,6 @@ public class ScheduleEntity extends BaseEntity {
     private String title;
     private String content;
 
-    // 유저가 있어야 스케쥴이 존재할수 있다
-    @ManyToOne(fetch = FetchType.LAZY, optional = false) // jpa null 허용
-    @JoinColumn(name = "user_id", nullable = false) // db null 허용
-    private UserEntity userEntity;
-
-
-
     public ScheduleEntity(String userName, String title, String content) {
         this.userName = userName;
         this.title = title;

@@ -27,8 +27,10 @@ public class UserController {
     }
 
     // 유저 단 건 조회
-    @GetMapping("users/{userId}")
+    @GetMapping("/users/{userId}")
     public GetUserResponse getUser(@PathVariable Long userId) {
         return userService.getOne(userId);
     }
+
+    // 유저
 }

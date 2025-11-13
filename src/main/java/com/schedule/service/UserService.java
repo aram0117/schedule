@@ -38,7 +38,7 @@ public class UserService {
     }
 
     // 유저 다 건 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<GetUserResponse> getAll() {
         // 유저 전체 찾기
         List<UserEntity> users = userRepository.findAll();
@@ -60,7 +60,7 @@ public class UserService {
     }
 
     // 유저 단 건 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public GetUserResponse getOne(Long userId) {
         // 유저 아이디로 유저를 찾고 없으면 예외처리
         UserEntity user = userRepository.findById(userId).orElseThrow(
