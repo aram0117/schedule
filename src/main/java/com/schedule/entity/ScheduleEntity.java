@@ -10,23 +10,28 @@ import lombok.NoArgsConstructor;
 @Table(name = "schedules")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleEntity extends BaseEntity {
-    // 스케쥴 DB
+    // 스케쥴 필드
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
-    private String userName;
+    @Column(length = 10, nullable = false)
     private String title;
+    @Column(nullable = false)
     private String content;
 
-    public ScheduleEntity(String userName, String title, String content) {
-        this.userName = userName;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+
+    public ScheduleEntity(String title, String content, UserEntity user) {
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
     // 업데이트 구현시 반환
-    public void update(String userName, String title, String content){
-        this.userName = userName;
+    public void update(String title, String content){
         this.title = title;
         this.content = content;
     }

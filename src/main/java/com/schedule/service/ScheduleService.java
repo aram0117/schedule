@@ -1,8 +1,10 @@
 package com.schedule.service;
 
-import com.schedule.dto.*;
 import com.schedule.entity.ScheduleEntity;
+import com.schedule.entity.UserEntity;
 import com.schedule.repository.ScheduleRepository;
+import com.schedule.repository.UserRepository;
+import com.schedule.schduledto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,22 +18,26 @@ import java.util.List;
 public class ScheduleService {
     // 스케쥴 레포지토리 필드
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     // 스케쥴 생성
     @Transactional
     public CreateScheduleResponse createSchedule(CreateScheduleRequest request) {
+        // 유저db에 저장된 이메일과 요청할 이메일이 일치 하지 않을때 예외처리
+        UserEntity user = userRepository.findByUserId(request.getUserId()).orElseThrow(
+                () -> new IllegalStateException("없는 유저 입니다")
+        );
         // 스케쥴 요청
         ScheduleEntity schedule = new ScheduleEntity(
-                request.getUserName(),
                 request.getTitle(),
-                request.getContent()
+                request.getContent(),
+                user
         );
-        // 스케쥴 DB에 스케쥴 저장
+        // 스케쥴 영속화
         ScheduleEntity saveSchedule = scheduleRepository.save(schedule);
         // 스케쥴 반환
         return new CreateScheduleResponse(
                 saveSchedule.getScheduleId(),
-                saveSchedule.getUserName(),
                 saveSchedule.getTitle(),
                 saveSchedule.getContent(),
                 saveSchedule.getCreatedAt(),
@@ -48,8 +54,8 @@ public class ScheduleService {
         List<GetScheduleResponse> scheduleDtoList = new ArrayList<>();
         for(ScheduleEntity schedule : schedules) {
             GetScheduleResponse scheduleDto = new GetScheduleResponse(
+                    schedule.getUser().getUserId(),
                     schedule.getScheduleId(),
-                    schedule.getUserName(),
                     schedule.getTitle(),
                     schedule.getContent(),
                     schedule.getCreatedAt(),
@@ -72,8 +78,8 @@ public class ScheduleService {
         );
         // 스케쥴 아이디로 찾은 스케쥴 반환
         return new GetScheduleResponse(
+                schedule.getUser().getUserId(),
                 schedule.getScheduleId(),
-                schedule.getUserName(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getCreatedAt(),
@@ -92,14 +98,12 @@ public class ScheduleService {
 
         // 스케쥴 수정 요청
         schedule.update(
-                request.getUserName(),
                 request.getTitle(),
                 request.getContent()
         );
         // 수정 된 스케쥴 반환
         return new UpdateScheduleResponse(
                 schedule.getScheduleId(),
-                schedule.getUserName(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getCreatedAt(),

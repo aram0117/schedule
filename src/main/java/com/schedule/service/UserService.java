@@ -1,6 +1,7 @@
 package com.schedule.service;
 
-import com.schedule.dto.*;
+import com.schedule.config.PasswordEncoder;
+import com.schedule.userdto.*;
 import com.schedule.entity.UserEntity;
 import com.schedule.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +17,26 @@ import java.util.List;
 public class UserService {
     // 유저 레포지토리 필드
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     // 유저 생성
     @Transactional
-    public CreateUserResponse save(CreateUserRequest request) {
+    public CreateUserResponse createUser(CreateUserRequest request) {
+
+        // 이메일 중복 검증
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+        }
+
         // 유저 요청
         UserEntity user = new UserEntity(
                 request.getUserName(),
-                request.getEmail()
+                request.getEmail(),
+                // 비밀번호 암호화
+                passwordEncoder.encode(request.getPassword())
         );
-        // 유저 저장
+        // 유저 영속화
         UserEntity saveUser = userRepository.save(user);
         return new CreateUserResponse(
                 saveUser.getUserId(),
@@ -86,7 +96,8 @@ public class UserService {
         // 유저 수정 요청
         user.update(
                 request.getUserName(),
-                request.getEmail()
+                request.getEmail(),
+                request.getPassword()
         );
         // 수정 된 유저 반환
         return new UpdateUserResponse(
