@@ -3,6 +3,6 @@
 ---
 
 ## api 명세와 ERD
-<img width="691" height="917" alt="image" src="https://github.com/user-attachments/assets/24bd6fe6-4e0b-455f-8f33-40ba29233e3a" />
+<img width="968" height="722" alt="image" src="https://github.com/user-attachments/assets/00c6613f-5e7a-43f7-af6b-3133ed78b149" />
 <img width="669" height="520" alt="image" src="https://github.com/user-attachments/assets/64927561-a26b-4db6-a672-018ec7201eb2" />
 
